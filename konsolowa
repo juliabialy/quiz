@@ -1,0 +1,146 @@
+
+using System;
+using System.Collections.Generic;
+
+abstract class Pytanie
+{
+    protected string tresc;
+    protected string nazwaPliku;
+    protected bool czyPoprawna;
+
+    public Pytanie(string tresc, string nazwaPliku)
+    {
+        this.tresc = tresc;
+        this.nazwaPliku = nazwaPliku;
+        this.czyPoprawna = false;
+    }
+
+    public abstract bool SprawdzOdpowiedz(char odpowiedz);
+}
+
+class PytanieZamkniete : Pytanie
+{
+    private string odpowiedzA;
+    private string odpowiedzB;
+    private string odpowiedzC;
+    private char poprawnaOdpowiedz;
+
+    public PytanieZamkniete(
+        string tresc,
+        string nazwaPliku,
+        string odpowiedzA,
+        string odpowiedzB,
+        string odpowiedzC,
+        char poprawnaOdpowiedz
+    ) : base(tresc, nazwaPliku)
+    {
+        this.odpowiedzA = odpowiedzA;
+        this.odpowiedzB = odpowiedzB;
+        this.odpowiedzC = odpowiedzC;
+        this.poprawnaOdpowiedz = char.ToUpper(
+            poprawnaOdpowiedz
+        );
+    }
+
+    public override bool SprawdzOdpowiedz(char odpowiedz)
+    {
+        odpowiedz = char.ToUpper(odpowiedz);
+
+        czyPoprawna = odpowiedz == poprawnaOdpowiedz;
+
+        return czyPoprawna;
+    }
+
+    public void Wyswietl()
+    {
+        Console.WriteLine(tresc);
+        Console.WriteLine("A. " + odpowiedzA);
+        Console.WriteLine("B. " + odpowiedzB);
+        Console.WriteLine("C. " + odpowiedzC);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        List<PytanieZamkniete> pytania = new List<PytanieZamkniete>
+        {
+            new PytanieZamkniete(
+                "Które to schronisko?",
+                "python.jpg",
+                "Na Rysiance.",
+                "Na Wielkiej Raczy.",
+                "Na Wielkiej Rycerzowej.",
+                'C'
+            ),
+
+            new PytanieZamkniete(
+                "Zwierzę na zdjęciu to",
+                "if.jpg",
+                "owczarek.",
+                "wilk",
+                "kozica",
+                'B'
+            ),
+
+            new PytanieZamkniete(
+                "W odddali sa widoczne",
+                "zad3.jpg",
+                "Himalaje",
+                "Alpy",
+                "Tatry",
+                'C'
+            )
+        };
+
+        int punkty = 0;
+
+
+        for (int i = 0; i < pytania.Count; i++)
+        {
+            Console.WriteLine();
+            Console.WriteLine($"Pytanie {i + 1}:");
+
+            pytania[i].Wyswietl();
+
+            char odpowiedz;
+
+            while (true)
+            {
+                Console.Write("Podaj odpowiedź (A, B lub C): ");
+
+                string wpisanaOdpowiedz = Console.ReadLine() ?? "";
+
+                if (wpisanaOdpowiedz.Length == 1)
+                {
+                    odpowiedz = char.ToUpper(wpisanaOdpowiedz[0]);
+
+                    if (odpowiedz == 'A' ||
+                        odpowiedz == 'B' ||
+                        odpowiedz == 'C')
+                    {
+                        break;
+                    }
+                }
+
+                Console.WriteLine(
+                    "Błąd"
+                );
+            }
+
+            if (pytania[i].SprawdzOdpowiedz(odpowiedz))
+            {
+                Console.WriteLine("dobrze");
+                punkty++;
+            }
+            else
+            {
+                Console.WriteLine("źle");
+            }
+        }
+
+        Console.WriteLine($"Wynik: {punkty}/{pytania.Count}");
+
+    }
+}
